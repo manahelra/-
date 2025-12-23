@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRO MAX ULTIMATE V2 - الإصدار المتطور</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { 
+            --bg: #f8fafc; 
+            --card: #ffffff; 
+            --text: #1e293b; 
+            --accent: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+        .dark { 
+            --bg: #050505; 
+            --card: #111111; 
+            --text: #f1f5f9; 
+            --accent: #3b82f6;
+            --success: #34d399;
+            --danger: #f87171;
+        }
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg) 100%);
+            color: var(--text); 
+            transition: all 0.3s ease;
+        }
+        
+        .glass { 
+            background: var(--card); 
+            border: 1px solid rgba(128,128,128,0.1); 
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-btn { 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
+        .nav-btn.active { 
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            color: white; 
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+            transform: translateX(-5px);
+        }
+        
+        .tab-content { 
+            display: none; 
+        }
+        
+        .tab-content.active { 
+            display: block; 
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp { 
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            } 
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            } 
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--card);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .search-highlight {
+            background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 100%);
+            color: white;
+        }
+        
+        @media print { 
+            .no-print { display: none !important; } 
+            .print-area { display: block !important; }
+            body { background: white; }
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(37, 99, 235, 0.1);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s;
+        }
+        
+        .tooltip:hover::after {
+            opacity: 1;
+            bottom: calc(100% + 5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+    <!-- Notification System -->
+    <div id="notification" class="notification">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+            <span id="notificationText" class="font-bold"></span>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="w-full lg:w-72 glass m-4 no-print flex flex-col h-[95vh] sticky top-4">
+        <div class="p-8 text-center border-b border-gray-100 dark:border-white/5">
+            <h1 class="text-3xl font-black text-blue-500 italic">PRO<span class="dark:text-white">MAX</span></h1>
+            <p class="text-[10px] opacity-40 mt-1 uppercase tracking-widest">V2.0 - Midnight Auto-Sync</p>
+            <div class="mt-4 text-xs opacity-60">
+                <i class="fas fa-database"></i> إجمالي المنتجات: <span id="totalProducts" class="font-bold text-blue-500">0</span>
+            </div>
+        </div>
+        
+        <nav class="flex-grow p-4 space-y-2 mt-4 overflow-y-auto">
+            <button onclick="switchTab('dashboard', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-chart-line text-purple-500"></i> <span>لوحة التحكم</span>
+            </button>
+            <button onclick="switchTab('cashier', this)" class="nav-btn active w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all">
+                <i class="fas fa-cash-register text-green-500"></i> <span>نقطة البيع</span>
+            </button>
+            <button onclick="switchTab('inventory', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-warehouse text-blue-500"></i> <span>المخزن والبحث</span>
+            </button>
+            <button onclick="switchTab('orders', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-clipboard-list text-yellow-500"></i> <span>قائمة الطلبات</span>
+            </button>
+            <button onclick="switchTab('suppliers', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-truck-fast text-orange-500"></i> <span>الموردين</span>
+            </button>
+            <button onclick="switchTab('archive', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-history text-indigo-500"></i> <span>السجل اليومي</span>
+            </button>
+            <button onclick="switchTab('reports', this)" class="nav-btn w-full flex items-center gap-4 p-4 rounded-xl font-bold transition-all opacity-60 hover:opacity-100">
+                <i class="fas fa-file-chart-pie text-pink-500"></i> <span>التقارير</span>
+            </button>
+        </nav>
+
+        <div class="p-6 border-t dark:border-white/5 flex flex-col gap-4">
+            <button onclick="handleThemeToggle()" class="w-full p-3 glass flex items-center justify-center gap-2 font-bold hover:bg-blue-500 hover:text-white transition tooltip" data-tooltip="تبديل الوضع الليلي/النهاري">
+                <i class="fas fa-moon"></i> <span>تبديل المظهر</span>
+            </button>
+            <div id="clock" class="text-center font-black text-blue-500 text-xl font-mono">00:00:00</div>
+            <div id="dateDisplay" class="text-center text-xs opacity-60"></div>
+        </div>
+    </aside>
+
+    <main class="flex-grow p-4 lg:p-8">
+        
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-4xl font-black mb-2">لوحة التحكم</h2>
+                <p class="opacity-60">نظرة شاملة على أداء النظام</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="glass p-6 stat-card border-r-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-60 mb-2">إجمالي المنتجات</p>
+                            <h3 id="dashTotalProducts" class="text-3xl font-black text-blue-500">0</h3>
+                        </div>
+                        <i class="fas fa-boxes text-5xl opacity-10"></i>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 stat-card border-r-4 border-green-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-60 mb-2">قيمة المخزون</p>
+                            <h3 id="dashInventoryValue" class="text-3xl font-black text-green-500">0</h3>
+                        </div>
+                        <i class="fas fa-dollar-sign text-5xl opacity-10"></i>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 stat-card border-r-4 border-red-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-60 mb-2">منتجات ناقصة</p>
+                            <h3 id="dashLowStock" class="text-3xl font-black text-red-500">0</h3>
+                        </div>
+                        <i class="fas fa-exclamation-triangle text-5xl opacity-10"></i>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 stat-card border-r-4 border-purple-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-60 mb-2">المبيعات اليوم</p>
+                            <h3 id="dashTodaySales" class="text-3xl font-black text-purple-500">0</h3>
+                        </div>
+                        <i class="fas fa-chart-line text-5xl opacity-10"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="glass p-6">
+                    <h3 class="text-xl font-black mb-4 flex items-center gap-2">
+                        <i class="fas fa-fire text-red-500"></i> المنتجات الأكثر مبيعاً
+                    </h3>
+                    <div id="topProducts" class="space-y-3"></div>
+                </div>
+                
+                <div class="glass p-6">
+                    <h3 class="text-xl font-black mb-4 flex items-center gap-2">
+                        <i class="fas fa-clock text-blue-500"></i> آخر العمليات
+                    </h3>
+                    <div id="recentActivity" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cashier Section -->
+        <section id="cashier" class="tab-content active">
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+                <div class="xl:col-span-3 space-y-6">
+                    <div class="glass p-6 relative">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-search text-blue-500 text-xl"></i>
+                            <input type="text" id="cSearch" oninput="searchCash(this.value)" placeholder="ابحث باسم المنتج للبيع الفوري... (Ctrl+F)" 
+                                class="w-full p-5 rounded-2xl bg-gray-50 dark:bg-white/5 border-0 focus:ring-2 focus:ring-blue-500 text-xl font-bold outline-none">
+                        </div>
+                        <div id="cResults" class="absolute left-6 right-6 mt-2 glass z-50 hidden max-h-80 overflow-y-auto shadow-2xl"></div>
+                    </div>
+                    
+                    <div class="glass overflow-hidden shadow-xl min-h-[500px]">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+                            <h3 class="text-2xl font-black flex items-center gap-3">
+                                <i class="fas fa-shopping-cart"></i> سلة المشتريات
+                            </h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right">
+                                <thead class="bg-gray-50 dark:bg-white/5">
+                                    <tr>
+                                        <th class="p-5 font-black">المنتج</th>
+                                        <th class="p-5 font-black">السعر</th>
+                                        <th class="p-5 font-black">الكمية</th>
+                                        <th class="p-5 font-black">المجموع</th>
+                                        <th class="p-5 font-black">إجراءات</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cartItems"></tbody>
+                            </table>
+                            <div id="emptyCart" class="text-center py-20 opacity-40">
+                                <i class="fas fa-shopping-cart text-6xl mb-4"></i>
+                                <p class="text-xl font-bold">السلة فارغة</p>
+                                <p class="text-sm">ابحث عن منتج لإضافته للسلة</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="xl:col-span-1">
+                    <div class="glass p-8 sticky top-8 border-t-8 border-blue-600 text-center shadow-2xl space-y-6">
+                        <div>
+                            <p class="text-sm opacity-50 mb-2 uppercase font-bold tracking-widest">المجموع الكلي</p>
+                            <h2 class="text-6xl font-black text-blue-600" id="totalPrice">0.00</h2>
+                            <p class="text-xs opacity-40 mt-2">دينار أردني</p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="glass p-4 text-right">
+                                <p class="text-xs opacity-60 mb-1">عدد الأصناف</p>
+                                <p class="text-2xl font-black" id="itemCount">0</p>
+                            </div>
+                            <div class="glass p-4 text-right">
+                                <p class="text-xs opacity-60 mb-1">إجمالي القطع</p>
+                                <p class="text-2xl font-black" id="totalItems">0</p>
+                            </div>
+                        </div>
+                        
+                        <button onclick="confirmSale()" class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 py-6 rounded-2xl font-black text-2xl text-white shadow-xl transition-all active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fas fa-check-circle"></i>
+                            <span>تأكيد البيع</span>
+                        </button>
+                        
+                        <button onclick="clearCart()" class="w-full bg-red-500 hover:bg-red-600 py-4 rounded-2xl font-bold text-white transition-all">
+                            <i class="fas fa-trash"></i> مسح السلة
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Section -->
+        <section id="inventory" class="tab-content">
+            <div class="flex flex-col lg:flex-row gap-6 mb-8 items-center">
+                <div class="flex-grow glass p-4 w-full relative">
+                    <i class="fas fa-search absolute right-8 top-8 text-blue-500"></i>
+                    <input type="text" id="invSearch" oninput="renderInv(this.value)" placeholder="ابحث في المخزن بالاسم..." class="w-full p-4 pr-14 bg-transparent outline-none text-xl font-bold">
+                </div>
+                <button onclick="openModal('pModal')" class="btn-primary px-10 py-5 rounded-2xl font-black text-white shadow-xl flex items-center gap-3">
+                    <i class="fas fa-plus"></i> إضافة صنف جديد
+                </button>
+                <button onclick="exportInventory()" class="bg-green-600 hover:bg-green-700 px-10 py-5 rounded-2xl font-black text-white shadow-xl flex items-center gap-3">
+                    <i class="fas fa-file-excel"></i> تصدير
+                </button>
+            </div>
+            
+            <div class="glass overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right">
+                        <thead class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+                            <tr>
+                                <th class="p-5 font-black">#</th>
+                                <th class="p-5 font-black">الصنف</th>
+                                <th class="p-5 font-black">المخزون</th>
+                                <th class="p-5 font-black">حد النقص</th>
+                                <th class="p-5 font-black">سعر التكلفة</th>
+                                <th class="p-5 font-black">سعر البيع</th>
+                                <th class="p-5 font-black">الربح</th>
+                                <th class="p-5 font-black">الحالة</th>
+                                <th class="p-5 font-black">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invTable" class="divide-y dark:divide-white/5"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Orders Section -->
+        <section id="orders" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass p-8">
+                    <h2 class="text-2xl font-black mb-6 text-red-500 flex items-center gap-3">
+                        <i class="fas fa-exclamation-triangle"></i> أصناف وصلت حد النقص
+                    </h2>
+                    <div id="lowStockList" class="space-y-3"></div>
+                </div>
+                
+                <div id="printSheet" class="bg-white p-12 text-black rounded shadow-2xl min-h-[600px] flex flex-col">
+                    <div class="flex justify-between border-b-4 border-black pb-4 mb-8">
+                        <div>
+                            <h2 class="text-3xl font-black italic">ORDER LIST</h2>
+                            <p class="text-sm opacity-60 mt-2">قائمة الطلبات المطلوبة</p>
+                        </div>
+                        <button onclick="window.print()" class="no-print bg-black text-white px-6 py-3 rounded-2xl font-bold hover:bg-gray-800 transition">
+                            <i class="fas fa-print"></i> طباعة
+                        </button>
+                    </div>
+                    <div id="finalOrderItems" class="flex-grow space-y-4 font-bold text-xl"></div>
+                    <div class="border-t-4 border-black pt-4 mt-8">
+                        <p class="text-sm opacity-60">التاريخ: <span id="orderDate"></span></p>
+                        <p class="text-sm opacity-60">إجمالي الأصناف: <span id="orderCount">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Suppliers Section -->
+        <section id="suppliers" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass p-8">
+                    <h3 class="text-2xl font-black mb-6 border-b pb-4 flex items-center gap-3">
+                        <i class="fas fa-plus-circle text-blue-500"></i> إضافة مورد جديد
+                    </h3>
+                    <div class="space-y-4 mb-8">
+                        <input type="text" id="supName" placeholder="اسم المورد" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500">
+                        <input type="tel" id="supPhone" placeholder="رقم الهاتف" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500">
+                        <input type="email" id="supEmail" placeholder="البريد الإلكتروني (اختياري)" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500">
+                        <textarea id="supNotes" placeholder="ملاحظات (اختياري)" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                        <button onclick="addSupplier()" class="w-full btn-primary py-4 rounded-xl text-white font-black text-xl">
+                            <i class="fas fa-save"></i> حفظ المورد
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass p-8">
+                    <h3 class="text-2xl font-black mb-6 border-b pb-4 flex items-center gap-3">
+                        <i class="fas fa-list text-green-500"></i> قائمة الموردين (<span id="supCount">0</span>)
+                    </h3>
+                    <div id="supList" class="space-y-3 max-h-[600px] overflow-y-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archive Section -->
+        <section id="archive" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-4xl font-black italic mb-2">السجل اليومي</h2>
+                    <p class="opacity-60">سجل جميع العمليات اليومية</p>
+                </div>
+                <button onclick="if(confirm('هل تريد ترحيل البيانات يدوياً الآن؟')){dailySync()}" class="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-xl text-white font-bold transition flex items-center gap-2">
+                    <i class="fas fa-sync"></i> ترحيل يدوي
+                </button>
+            </div>
+            
+            <div class="glass p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <p class="text-sm opacity-60 mb-2">إجمالي العمليات</p>
+                        <p class="text-3xl font-black text-blue-500" id="totalArchives">0</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm opacity-60 mb-2">إجمالي المبيعات</p>
+                        <p class="text-3xl font-black text-green-500" id="totalArchiveSales">0.00</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-sm opacity-60 mb-2">متوسط البيع</p>
+                        <p class="text-3xl font-black text-purple-500" id="avgSale">0.00</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="archiveGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-4xl font-black mb-2">التقارير والإحصائيات</h2>
+                <p class="opacity-60">تحليل شامل لأداء النظام</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass p-8">
+                    <h3 class="text-2xl font-black mb-6 flex items-center gap-3">
+                        <i class="fas fa-chart-bar text-blue-500"></i> تقرير المخزون
+                    </h3>
+                    <div id="inventoryReport" class="space-y-4"></div>
+                </div>
+                
+                <div class="glass p-8">
+                    <h3 class="text-2xl font-black mb-6 flex items-center gap-3">
+                        <i class="fas fa-dollar-sign text-green-500"></i> تقرير الأرباح
+                    </h3>
+                    <div id="profitReport" class="space-y-4"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="pModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-6 z-[100]">
+        <div class="glass p-10 w-full max-w-2xl">
+            <h3 class="text-3xl font-black mb-6 flex items-center gap-3">
+                <i class="fas fa-box text-blue-500"></i> إضافة منتج جديد
+            </h3>
+            <div class="space-y-4">
+                <input type="text" id="pName" placeholder="اسم المنتج" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="pQty" placeholder="الكمية الحالية" class="p-4 rounded-xl glass outline-none text-center font-black focus:ring-2 focus:ring-blue-500">
+                    <input type="number" id="pAlert" placeholder="حد النقص" class="p-4 rounded-xl glass outline-none text-center font-black border-2 border-red-500/30 focus:ring-2 focus:ring-red-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" step="0.01" id="pCost" placeholder="سعر الشراء" class="p-4 rounded-xl glass outline-none text-center font-black text-red-500 focus:ring-2 focus:ring-red-500">
+                    <input type="number" step="0.01" id="pSale" placeholder="سعر البيع" class="p-4 rounded-xl glass outline-none text-center font-black text-green-600 focus:ring-2 focus:ring-green-500">
+                </div>
+                <div class="flex gap-4 pt-6">
+                    <button onclick="closeModal('pModal')" class="flex-grow py-4 rounded-xl font-bold opacity-50 hover:opacity-100 transition glass">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                    <button onclick="saveProduct()" class="flex-grow btn-primary py-4 rounded-xl text-white font-black text-xl">
+                        <i class="fas fa-save"></i> حفظ المنتج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-6 z-[100]">
+        <div class="glass p-10 w-full max-w-2xl">
+            <h3 class="text-3xl font-black mb-6 flex items-center gap-3">
+                <i class="fas fa-edit text-yellow-500"></i> تعديل المنتج
+            </h3>
+            <div class="space-y-4">
+                <input type="hidden" id="editId">
+                <input type="text" id="editName" placeholder="اسم المنتج" class="w-full p-4 rounded-xl glass outline-none font-bold focus:ring-2 focus:ring-blue-500">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="editQty" placeholder="الكمية الحالية" class="p-4 rounded-xl glass outline-none text-center font-black focus:ring-2 focus:ring-blue-500">
+                    <input type="number" id="editAlert" placeholder="حد النقص" class="p-4 rounded-xl glass outline-none text-center font-black border-2 border-red-500/30">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" step="0.01" id="editCost" placeholder="سعر الشراء" class="p-4 rounded-xl glass outline-none text-center font-black text-red-500">
+                    <input type="number" step="0.01" id="editSale" placeholder="سعر البيع" class="p-4 rounded-xl glass outline-none text-center font-black text-green-600">
+                </div>
+                <div class="flex gap-4 pt-6">
+                    <button onclick="closeModal('editModal')" class="flex-grow py-4 rounded-xl font-bold opacity-50 hover:opacity-100 transition glass">
+                        <i class="fas fa-times"></i> إلغاء
+                    </button>
+                    <button onclick="updateProduct()" class="flex-grow bg-yellow-500 hover:bg-yellow-600 py-4 rounded-xl text-white font-black text-xl transition">
+                        <i class="fas fa-save"></i> حفظ التعديلات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database
+        let db = {
+            inv: JSON.parse(localStorage.getItem('p_max_inv')) || [],
+            sup: JSON.parse(localStorage.getItem('p_max_sup')) || [],
+            arc: JSON.parse(localStorage.getItem('p_max_arc')) || [],
+            orderItems: []
+        };
+        let cart = [];
+
+        // Notification System
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            const icon = notification.querySelector('i');
+            
+            notificationText.textContent = message;
+            
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle text-green-500 text-2xl';
+            } else if (type === 'error') {
+                icon.className = 'fas fa-exclamation-circle text-red-500 text-2xl';
+            } else if (type === 'warning') {
+                icon.className = 'fas fa-exclamation-triangle text-yellow-500 text-2xl';
+            }
+            
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Tab Switching
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+            render();
+        }
+
+        // Theme Toggle
+        function handleThemeToggle() { 
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+            showNotification('تم تغيير المظهر بنجاح');
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+        }
+
+        // Cashier Functions
+        function searchCash(val) {
+            const res = document.getElementById('cResults');
+            if(!val) return res.classList.add('hidden');
+            const matches = db.inv.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+            res.classList.remove('hidden');
+            res.innerHTML = matches.map(p => `
+                <div onclick="toCart(${p.id})" class="p-5 hover:bg-blue-600 hover:text-white transition cursor-pointer flex justify-between items-center border-b dark:border-white/5">
+                    <div>
+                        <span class="font-bold text-lg">${p.name}</span>
+                        <p class="text-xs opacity-60">متوفر: ${p.qty} قطعة</p>
+                    </div>
+                    <span class="font-black text-2xl text-blue-500">${p.sale.toFixed(2)}</span>
+                </div>
+            `).join('') || '<div class="p-5 text-center opacity-60">لا توجد نتائج</div>';
+        }
+
+        function toCart(id) {
+            const p = db.inv.find(x => x.id === id);
+            if(p.qty <= 0) {
+                showNotification('الكمية نافذة!', 'error');
+                return;
+            }
+            const inCart = cart.find(c => c.id === id);
+            if(inCart) { 
+                if(inCart.cQty < p.qty) {
+                    inCart.cQty++;
+                    showNotification(`تم إضافة ${p.name} للسلة`);
+                } else {
+                    showNotification('لا توجد كمية كافية في المخزون', 'warning');
+                }
+            } else {
+                cart.push({...p, cQty: 1});
+                showNotification(`تم إضافة ${p.name} للسلة`);
+            }
+            document.getElementById('cResults').classList.add('hidden');
+            document.getElementById('cSearch').value = '';
+            renderCart();
+        }
+
+        function renderCart() {
+            const body = document.getElementById('cartItems');
+            const emptyCart = document.getElementById('emptyCart');
+            
+            if (cart.length === 0) {
+                body.innerHTML = '';
+                emptyCart.style.display = 'block';
+            } else {
+                emptyCart.style.display = 'none';
+                body.innerHTML = cart.map((item, i) => `
+                    <tr class="border-b dark:border-white/5 hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                        <td class="p-5">
+                            <div class="font-bold text-lg">${item.name}</div>
+                            <div class="text-xs opacity-60">كود: ${item.id}</div>
+                        </td>
+                        <td class="p-5 font-black text-blue-500">${item.sale.toFixed(2)}</td>
+                        <td class="p-5">
+                            <div class="flex items-center gap-2">
+                                <button onclick="decreaseQty(${i})" class="w-8 h-8 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="font-black text-xl px-4">${item.cQty}</span>
+                                <button onclick="increaseQty(${i})" class="w-8 h-8 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-5 font-black text-green-600 text-xl">${(item.sale * item.cQty).toFixed(2)}</td>
+                        <td class="p-5">
+                            <button onclick="removeFromCart(${i})" class="text-red-500 hover:text-red-700 transition tooltip" data-tooltip="حذف من السلة">
+                                <i class="fas fa-trash-alt text-xl"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            
+            const total = cart.reduce((s, c) => s + (c.sale * c.cQty), 0);
+            document.getElementById('totalPrice').innerText = total.toFixed(2);
+            document.getElementById('itemCount').innerText = cart.length;
+            document.getElementById('totalItems').innerText = cart.reduce((s, c) => s + c.cQty, 0);
+        }
+
+        function increaseQty(index) {
+            const item = cart[index];
+            const product = db.inv.find(p => p.id === item.id);
+            if (item.cQty < product.qty) {
+                item.cQty++;
+                renderCart();
+            } else {
+                showNotification('لا توجد كمية كافية في المخزون', 'warning');
+            }
+        }
+
+        function decreaseQty(index) {
+            if (cart[index].cQty > 1) {
+                cart[index].cQty--;
+                renderCart();
+            } else {
+                removeFromCart(index);
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+            showNotification('تم حذف المنتج من السلة');
+        }
+
+        function clearCart() {
+            if (cart.length === 0) return;
+            if (confirm('هل تريد مسح جميع المنتجات من السلة؟')) {
+                cart = [];
+                renderCart();
+                showNotification('تم مسح السلة');
+            }
+        }
+
+        function confirmSale() {
+            if(cart.length === 0) {
+                showNotification('السلة فارغة!', 'warning');
+                return;
+            }
+            
+            if (!confirm('هل تريد تأكيد عملية البيع؟')) return;
+            
+            cart.forEach(c => { 
+                const p = db.inv.find(i => i.id === c.id); 
+                p.qty -= c.cQty; 
+            });
+            
+            db.arc.unshift({
+                id: Date.now(),
+                date: new Date().toLocaleString('ar-EG'),
+                total: document.getElementById('totalPrice').innerText,
+                items: cart.map(c => `${c.name} (x${c.cQty})`)
+            });
+            
+            cart = [];
+            renderCart();
+            sync();
+            showNotification('تم تأكيد البيع وإرساله للسجل بنجاح', 'success');
+        }
+
+        // Inventory Functions
+        function renderInv(f = "") {
+            const body = document.getElementById('invTable');
+            const items = db.inv.filter(p => p.name.toLowerCase().includes(f.toLowerCase()));
+            
+            body.innerHTML = items.map((p, index) => {
+                const profit = (p.sale - p.cost).toFixed(2);
+                const profitPercent = p.cost > 0 ? ((profit / p.cost) * 100).toFixed(1) : 0;
+                const status = p.qty <= p.alertLevel ? 'ناقص' : p.qty <= p.alertLevel * 2 ? 'منخفض' : 'متوفر';
+                const statusColor = p.qty <= p.alertLevel ? 'bg-red-500 text-white' : p.qty <= p.alertLevel * 2 ? 'bg-yellow-500 text-white' : 'bg-green-500 text-white';
+                
+                return `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition">
+                        <td class="p-5 font-bold opacity-40">${index + 1}</td>
+                        <td class="p-5 font-black text-lg">${p.name}</td>
+                        <td class="p-5 font-bold">
+                            <span class="px-4 py-2 rounded-xl ${p.qty <= p.alertLevel ? 'bg-red-500 text-white animate-pulse' : 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300'}">${p.qty}</span>
+                        </td>
+                        <td class="p-5 font-bold text-red-400">${p.alertLevel}</td>
+                        <td class="p-5 opacity-60 font-bold">${p.cost.toFixed(2)}</td>
+                        <td class="p-5 font-black text-green-600 text-lg">${p.sale.toFixed(2)}</td>
+                        <td class="p-5">
+                            <div class="font-bold text-green-600">${profit}</div>
+                            <div class="text-xs opacity-60">${profitPercent}%</div>
+                        </td>
+                        <td class="p-5">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${statusColor}">${status}</span>
+                        </td>
+                        <td class="p-5">
+                            <div class="flex gap-2">
+                                <button onclick="editProduct(${p.id})" class="text-yellow-500 hover:text-yellow-600 transition tooltip" data-tooltip="تعديل">
+                                    <i class="fas fa-edit text-lg"></i>
+                                </button>
+                                <button onclick="delP(${p.id})" class="text-red-500 hover:text-red-600 transition tooltip" data-tooltip="حذف">
+                                    <i class="fas fa-trash text-lg"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="9" class="text-center py-20 opacity-40">لا توجد منتجات</td></tr>';
+            
+            updateStats();
+        }
+
+        function editProduct(id) {
+            const p = db.inv.find(x => x.id === id);
+            if (!p) return;
+            
+            document.getElementById('editId').value = p.id;
+            document.getElementById('editName').value = p.name;
+            document.getElementById('editQty').value = p.qty;
+            document.getElementById('editAlert').value = p.alertLevel;
+            document.getElementById('editCost').value = p.cost;
+            document.getElementById('editSale').value = p.sale;
+            
+            openModal('editModal');
+        }
+
+        function updateProduct() {
+            const id = parseInt(document.getElementById('editId').value);
+            const p = db.inv.find(x => x.id === id);
+            
+            if (!p) return;
+            
+            p.name = document.getElementById('editName').value;
+            p.qty = parseFloat(document.getElementById('editQty').value) || 0;
+            p.alertLevel = parseFloat(document.getElementById('editAlert').value) || 3;
+            p.cost = parseFloat(document.getElementById('editCost').value) || 0;
+            p.sale = parseFloat(document.getElementById('editSale').value) || 0;
+            
+            sync();
+            closeModal('editModal');
+            showNotification('تم تحديث المنتج بنجاح');
+        }
+
+        function saveProduct() {
+            const name = document.getElementById('pName').value.trim();
+            if(!name) {
+                showNotification('الرجاء إدخال اسم المنتج', 'warning');
+                return;
+            }
+            
+            const p = {
+                id: Date.now(),
+                name: name,
+                qty: parseFloat(document.getElementById('pQty').value) || 0,
+                alertLevel: parseFloat(document.getElementById('pAlert').value) || 3,
+                cost: parseFloat(document.getElementById('pCost').value) || 0,
+                sale: parseFloat(document.getElementById('pSale').value) || 0
+            };
+            
+            db.inv.push(p);
+            sync();
+            closeModal('pModal');
+            showNotification('تم إضافة المنتج بنجاح');
+            
+            // Clear inputs
+            document.getElementById('pName').value = '';
+            document.getElementById('pQty').value = '';
+            document.getElementById('pAlert').value = '';
+            document.getElementById('pCost').value = '';
+            document.getElementById('pSale').value = '';
+        }
+
+        function delP(id) { 
+            if(confirm('حذف نهائي؟')) { 
+                const product = db.inv.find(x => x.id === id);
+                db.inv = db.inv.filter(x => x.id !== id); 
+                sync(); 
+                showNotification(`تم حذف ${product.name}`);
+            } 
+        }
+
+        function exportInventory() {
+            let csv = 'الصنف,المخزون,حد النقص,سعر التكلفة,سعر البيع,الربح\n';
+            db.inv.forEach(p => {
+                const profit = (p.sale - p.cost).toFixed(2);
+                csv += `${p.name},${p.qty},${p.alertLevel},${p.cost},${p.sale},${profit}\n`;
+            });
+            
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `inventory_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            showNotification('تم تصدير المخزون بنجاح');
+        }
+
+        // Orders Functions
+        function toggleOrder(name) {
+            if(db.orderItems.includes(name)) {
+                db.orderItems = db.orderItems.filter(n => n !== name);
+            } else {
+                db.orderItems.push(name);
+            }
+            render();
+        }
+
+        function renderOrders() {
+            const low = db.inv.filter(p => p.qty <= p.alertLevel);
+            document.getElementById('lowStockList').innerHTML = low.map(p => `
+                <div onclick="toggleOrder('${p.name}')" class="p-6 glass cursor-pointer flex justify-between items-center transition-all border-2 ${db.orderItems.includes(p.name)?'border-green-500 bg-green-500/10 scale-95':'border-red-500/30 hover:border-red-500'} rounded-xl">
+                    <div>
+                        <span class="font-black text-xl block mb-1">${p.name}</span>
+                        <span class="text-sm opacity-60">باقي: ${p.qty} / حد النقص: ${p.alertLevel}</span>
+                    </div>
+                    <div class="text-left">
+                        ${db.orderItems.includes(p.name) ? '<i class="fas fa-check-circle text-green-500 text-3xl"></i>' : '<i class="fas fa-exclamation-triangle text-red-500 text-3xl"></i>'}
+                    </div>
+                </div>
+            `).join('') || '<div class="text-center py-10 opacity-40"><i class="fas fa-check-circle text-6xl mb-4"></i><p class="font-bold">جميع المنتجات متوفرة</p></div>';
+            
+            document.getElementById('finalOrderItems').innerHTML = db.orderItems.map((n, i) => `
+                <div class="border-b-2 border-black border-dotted pb-2 flex justify-between">
+                    <span>${i + 1}. ${n}</span>
+                    <span>...................................</span>
+                </div>
+            `).join('') || '<div class="text-center opacity-40">لا توجد طلبات</div>';
+            
+            document.getElementById('orderDate').textContent = new Date().toLocaleDateString('ar-EG');
+            document.getElementById('orderCount').textContent = db.orderItems.length;
+        }
+
+        // Suppliers Functions
+        function addSupplier() {
+            const n = document.getElementById('supName').value.trim();
+            const h = document.getElementById('supPhone').value.trim();
+            const e = document.getElementById('supEmail').value.trim();
+            const notes = document.getElementById('supNotes').value.trim();
+            
+            if(!n) {
+                showNotification('الرجاء إدخال اسم المورد', 'warning');
+                return;
+            }
+            
+            db.sup.push({ 
+                id: Date.now(), 
+                name: n, 
+                phone: h,
+                email: e,
+                notes: notes
+            });
+            
+            document.getElementById('supName').value = ''; 
+            document.getElementById('supPhone').value = '';
+            document.getElementById('supEmail').value = '';
+            document.getElementById('supNotes').value = '';
+            sync();
+            showNotification('تم إضافة المورد بنجاح');
+        }
+
+        function renderSuppliers() {
+            document.getElementById('supList').innerHTML = db.sup.map(s => `
+                <div class="glass p-5 font-bold rounded-xl hover:scale-105 transition">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-grow">
+                            <div class="text-xl font-black mb-2 flex items-center gap-2">
+                                <i class="fas fa-user-tie text-blue-500"></i> ${s.name}
+                            </div>
+                            ${s.phone ? `<div class="text-sm opacity-60 mb-1"><i class="fas fa-phone"></i> ${s.phone}</div>` : ''}
+                            ${s.email ? `<div class="text-sm opacity-60 mb-1"><i class="fas fa-envelope"></i> ${s.email}</div>` : ''}
+                            ${s.notes ? `<div class="text-xs opacity-40 mt-2 italic">${s.notes}</div>` : ''}
+                        </div>
+                        <button onclick="if(confirm('حذف ${s.name}؟')){db.sup=db.sup.filter(x=>x.id!=${s.id});sync();showNotification('تم حذف المورد')}" class="text-red-500 hover:text-red-700 transition">
+                            <i class="fas fa-trash text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('') || '<div class="text-center py-10 opacity-40">لا يوجد موردين</div>';
+            
+            document.getElementById('supCount').textContent = db.sup.length;
+        }
+
+        // Archive & Reports
+        function renderArchive() {
+            const totalSales = db.arc.reduce((sum, a) => sum + parseFloat(a.total), 0);
+            const avgSale = db.arc.length > 0 ? (totalSales / db.arc.length) : 0;
+            
+            document.getElementById('totalArchives').textContent = db.arc.length;
+            document.getElementById('totalArchiveSales').textContent = totalSales.toFixed(2);
+            document.getElementById('avgSale').textContent = avgSale.toFixed(2);
+            
+            document.getElementById('archiveGrid').innerHTML = db.arc.map(a => `
+                <div class="glass p-6 border-b-4 border-blue-600 hover:scale-105 transition rounded-xl">
+                    <div class="flex justify-between mb-4 items-start">
+                        <div>
+                            <div class="text-xs opacity-40 mb-2"><i class="fas fa-calendar"></i> ${a.date}</div>
+                            <div class="text-3xl font-black text-green-500">${a.total} <span class="text-sm opacity-60">د.أ</span></div>
+                        </div>
+                        <i class="fas fa-receipt text-4xl opacity-10"></i>
+                    </div>
+                    <div class="text-sm opacity-60 border-t pt-4 mt-4 dark:border-white/5">
+                        <div class="font-bold mb-2">المنتجات:</div>
+                        ${a.items.join(' • ')}
+                    </div>
+                </div>
+            `).join('') || '<div class="col-span-3 text-center py-20 opacity-40"><i class="fas fa-inbox text-6xl mb-4"></i><p class="font-bold">لا يوجد سجل</p></div>';
+        }
+
+        function renderDashboard() {
+            const totalProducts = db.inv.length;
+            const inventoryValue = db.inv.reduce((sum, p) => sum + (p.qty * p.cost), 0);
+            const lowStock = db.inv.filter(p => p.qty <= p.alertLevel).length;
+            
+            // Get today's sales
+            const today = new Date().toLocaleDateString('ar-EG');
+            const todaySales = db.arc.filter(a => a.date.includes(today))
+                .reduce((sum, a) => sum + parseFloat(a.total), 0);
+            
+            document.getElementById('dashTotalProducts').textContent = totalProducts;
+            document.getElementById('dashInventoryValue').textContent = inventoryValue.toFixed(2);
+            document.getElementById('dashLowStock').textContent = lowStock;
+            document.getElementById('dashTodaySales').textContent = todaySales.toFixed(2);
+            
+            // Top Products (Mock data - would need sales tracking)
+            document.getElementById('topProducts').innerHTML = db.inv.slice(0, 5).map((p, i) => `
+                <div class="flex items-center justify-between p-4 glass rounded-xl hover:scale-105 transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-black">${i + 1}</div>
+                        <div>
+                            <div class="font-bold">${p.name}</div>
+                            <div class="text-xs opacity-60">${p.qty} متوفر</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-black text-green-600">${p.sale.toFixed(2)}</div>
+                    </div>
+                </div>
+            `).join('') || '<div class="text-center opacity-40">لا توجد بيانات</div>';
+            
+            // Recent Activity
+            document.getElementById('recentActivity').innerHTML = db.arc.slice(0, 5).map(a => `
+                <div class="flex items-center gap-4 p-4 glass rounded-xl">
+                    <i class="fas fa-shopping-bag text-2xl text-green-500"></i>
+                    <div class="flex-grow">
+                        <div class="font-bold">عملية بيع</div>
+                        <div class="text-xs opacity-60">${a.date}</div>
+                    </div>
+                    <div class="font-black text-green-600">${a.total}</div>
+                </div>
+            `).join('') || '<div class="text-center opacity-40">لا توجد عمليات</div>';
+        }
+
+        function renderReports() {
+            // Inventory Report
+            const totalValue = db.inv.reduce((sum, p) => sum + (p.qty * p.cost), 0);
+            const totalProfit = db.inv.reduce((sum, p) => sum + (p.qty * (p.sale - p.cost)), 0);
+            const avgProfit = db.inv.length > 0 ? (totalProfit / db.inv.length) : 0;
+            
+            document.getElementById('inventoryReport').innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">إجمالي قيمة المخزون</div>
+                        <div class="text-3xl font-black text-blue-500">${totalValue.toFixed(2)} د.أ</div>
+                    </div>
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">إجمالي المنتجات</div>
+                        <div class="text-3xl font-black">${db.inv.length}</div>
+                    </div>
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">المنتجات الناقصة</div>
+                        <div class="text-3xl font-black text-red-500">${db.inv.filter(p => p.qty <= p.alertLevel).length}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Profit Report
+            document.getElementById('profitReport').innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">إجمالي الربح المتوقع</div>
+                        <div class="text-3xl font-black text-green-500">${totalProfit.toFixed(2)} د.أ</div>
+                    </div>
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">متوسط الربح لكل منتج</div>
+                        <div class="text-3xl font-black text-purple-500">${avgProfit.toFixed(2)} د.أ</div>
+                    </div>
+                    <div class="p-4 glass rounded-xl">
+                        <div class="text-sm opacity-60 mb-1">إجمالي المبيعات</div>
+                        <div class="text-3xl font-black text-blue-500">${db.arc.reduce((sum, a) => sum + parseFloat(a.total), 0).toFixed(2)} د.أ</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Clock & Daily Sync
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('ar-SA');
+            document.getElementById('dateDisplay').innerText = now.toLocaleDateString('ar-EG', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Auto sync at midnight
+            if(now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+                dailySync();
+            }
+        }, 1000);
+
+        function dailySync() {
+            showNotification('الساعة الآن 12:00 - تم تحديث سجل اليوم بنجاح!', 'success');
+            sync();
+        }
+
+        // Modal Functions
+        function openModal(id) { 
+            document.getElementById(id).classList.replace('hidden', 'flex'); 
+        }
+        
+        function closeModal(id) { 
+            document.getElementById(id).classList.replace('flex', 'hidden'); 
+        }
+
+        // Sync & Render
+        function sync() {
+            localStorage.setItem('p_max_inv', JSON.stringify(db.inv));
+            localStorage.setItem('p_max_sup', JSON.stringify(db.sup));
+            localStorage.setItem('p_max_arc', JSON.stringify(db.arc));
+            render();
+        }
+
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = db.inv.length;
+        }
+
+        function render() {
+            renderInv();
+            renderOrders();
+            renderArchive();
+            renderSuppliers();
+            renderDashboard();
+            renderReports();
+            updateStats();
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl + F to focus search
+            if (e.ctrlKey && e.key === 'f') {
+                e.preventDefault();
+                document.getElementById('cSearch').focus();
+            }
+            
+            // ESC to close modals
+            if (e.key === 'Escape') {
+                closeModal('pModal');
+                closeModal('editModal');
+            }
+        });
+
+        // Initialize
+        render();
+    </script>
+</body>
+</html>
